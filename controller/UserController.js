@@ -10,7 +10,7 @@ const user = async (req, res) => {
       Name: Name, Place: Place, Message: Msg, Mobile: Mobile
     })
     await data.save()
-    return res.status(200).json(`Thank you ${Name} we will contact soon`)
+    return res.status(200).json(`Hello ${Name.toUpperCase()},we will contact soon`)
   } catch (error) {
     console.log(error);
 
