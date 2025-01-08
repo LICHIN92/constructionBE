@@ -23,6 +23,10 @@ const schema = new mongoose.Schema({
     Contracted:{
         type:Boolean,
         default:false
+    },
+    Work:{
+        type:String,
+        required:true
     }
 },
     {
