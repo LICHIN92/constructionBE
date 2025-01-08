@@ -7,7 +7,7 @@ conectDB()
 const app= express()
 
 const corsOption = {
-    origin: ['http://localhost:5173','https://construction-eosin.vercel.app/'], // Add your front-end URL
+    origin: ['http://localhost:5173','https://construction-eosin.vercel.app'], // Add your front-end URL
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true // Corrected from "Credential"
