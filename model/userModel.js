@@ -27,6 +27,10 @@ const schema = new mongoose.Schema({
     Work:{
         type:String,
         required:true
+    },
+    Completed:{
+        type:Boolean,
+        default:false
     }
 },
     {

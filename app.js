@@ -8,7 +8,7 @@ const app= express()
 
 const corsOption = {
     origin: ['http://localhost:5173','https://construction-eosin.vercel.app'], // Add your front-end URL
-    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    methods: ['GET', 'POST','PATCH', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true // Corrected from "Credential"
 };
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/',UserRouter)
 
-app.listen(process.env.port,()=>{
+app.listen(process.env.port,()=>{ 
     console.log(`app running at ${process.env.port}`); 
     
 })   
