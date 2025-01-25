@@ -21,7 +21,7 @@ const user = async (req, res) => {
   }
 }
 
-const login = async (req, res) => {
+const login = async (req, res) => { 
   console.log(req.body);
 
   const { UserName, Password } = req.body
@@ -249,6 +249,7 @@ const workers = async (req, res) => {
       Plumber: counts["Plumber"] || 0,
       Carpenter: counts["Carpenter"] || 0,
       Electrician: counts["Electrician"] || 0,
+      Tile:counts['Tiler']||0
     };
 
     console.log('Formatted counts:', jobCounts);
@@ -280,4 +281,4 @@ const workersJob = async (req, res) => {
 export {
   user, login, signup, getMsg, contactUpdate, deleteMsg,
   contracted, work, updateContract, updateComplete, workers, workersJob
-}                     
+}                      
