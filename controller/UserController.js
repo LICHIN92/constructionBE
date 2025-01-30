@@ -161,7 +161,8 @@ const contracted = async (req, res) => {
         Plumbing: counts["Plumbing"],
         Carpentry: counts["Carpentry"],
         Wiring: counts["Electrical Wiring"],
-        Total: counts["total"]
+        Total: counts["total"],
+        Paint:counts["Paint"]
       }
       console.log(counts);
 
