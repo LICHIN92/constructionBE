@@ -3,6 +3,9 @@ import USER from '../model/userModel.js'
 import WORKERS from '../model/workermodel.js';
 import bcrypt from 'bcrypt'
 import jsonwebtoken from 'jsonwebtoken'
+import { cloudinaryInstance } from '../config/clooudinary.js';
+import { configDotenv } from 'dotenv';
+import { Pics } from '../model/image.js';
 
 const user = async (req, res) => {
 
@@ -21,7 +24,7 @@ const user = async (req, res) => {
   }
 }
 
-const login = async (req, res) => { 
+const login = async (req, res) => {
   console.log(req.body);
 
   const { UserName, Password } = req.body
@@ -162,7 +165,7 @@ const contracted = async (req, res) => {
         Carpentry: counts["Carpentry"],
         Wiring: counts["Electrical Wiring"],
         Total: counts["total"],
-        Paint:counts["Paint"]
+        Paint: counts["Paint"]
       }
       console.log(counts);
 
@@ -250,7 +253,7 @@ const workers = async (req, res) => {
       Plumber: counts["Plumber"] || 0,
       Carpenter: counts["Carpenter"] || 0,
       Electrician: counts["Electrician"] || 0,
-      Tile:counts['Tiler']||0
+      Tile: counts['Tiler'] || 0
     };
 
     console.log('Formatted counts:', jobCounts);
@@ -272,14 +275,199 @@ const workersJob = async (req, res) => {
     const list = await WORKERS.find({ Job: work })
     console.log(list);
     console.log(list.length);
-    
+
     return res.status(200).json(list)
   } catch (error) {
     console.log(error);
     return res.status(500).josn('internal servwer error')
   }
 }
+
+const addImage = async (req, res) => {
+  try {
+    console.log(req.body);
+    console.log(req.files);
+    const { work, place } = req.body
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No files uploaded" });
+    }
+
+    const folderName = "Construction";
+    const uploadResults = [];
+
+    for (const file of req.files) {
+      const uploadedFile = await cloudinaryInstance.uploader.upload(file.path, {
+        public_id: `${folderName}/${file.originalname}`
+      });
+      uploadResults.push(uploadedFile.secure_url);
+    }
+    console.log(uploadResults);
+
+    const data = new Pics({ work: work, place: place, pics: uploadResults })
+    await data.save()
+
+    return res.status(200).json({
+      message: "Images uploaded successfully",
+    });
+
+  } catch (error) {
+    console.error("Upload Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getImage = async (req, res) => {
+  try {
+    const pics = await Pics.find()
+    console.log(pics);
+    return res.status(200).json(pics)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json('internal server error')
+
+  }
+}
+
+// const deletePic = async (req, res) => {
+
+//   const extractPublicId = (url) => {
+//     console.log('url', url);
+
+//     try {
+//       // Extract the part of the URL after "upload/"
+//       const parts = url.split('/upload/');
+//       console.log('parts', parts);
+
+//       // Remove the version part and get the public ID with extension
+//       const publicIdWithExtension = parts[1].replace(/^v\d+\//, ''); // Remove "v1725291251/"
+//       console.log("publicIdWithExtension", publicIdWithExtension)
+//       // Remove the file extension (e.g., ".jpg") and decode URL
+//       const publicId = decodeURIComponent(publicIdWithExtension.split('.')[0]);
+//       console.log('public', publicId);
+
+//       return publicId;
+//     } catch (error) {
+//       console.error(`Failed to extract public ID from URL: ${url}`, error);
+//       return null;
+//     }
+//   };
+//   console.log(req.params.id);
+//   const id = req.params.id
+//   try {
+//     const results = await Pics.findById(id)
+//     const pics = results.pics;
+//     console.log('Fetched pics:', pics);
+
+//     const picsIds = [];
+//     if (pics && pics.length > 0) {
+//       await Promise.all(
+//         pics.map(async (file) => {
+//           const publicId = extractPublicId(file);
+//           if (publicId) {
+//             picsIds.push(publicId);
+//           }
+//         })
+//       );
+//       console.log(picsIds);
+
+//       const deleteResults = await Promise.all(
+//         picsIds.map(async (publicId) => {
+//           try {
+//             const result = await cloudinaryInstance.uploader.destroy(publicId);
+//             console.log("Deletion result for", publicId, ":", result);
+//             return { publicId, ...result };
+//           } catch (error) {
+//             console.error(`Error deleting ${publicId}:`, error);
+//             return { publicId, error: error.message };
+//           }
+//         })
+//       );
+//       console.log(deleteResults);
+
+//     }
+//   } catch (error) {
+//     console.log(error);
+
+//   }
+// }
+
+const deletePic = async (req, res) => {
+  const extractPublicId = (url) => {
+    console.log('url:', url);
+
+    try {
+      const parts = url.split('/upload/');
+      console.log('parts', parts);
+
+      if (parts.length < 2) return null;
+
+      let publicIdWithExtension = parts[1].replace(/^v\d+\//, '');
+      console.log("publicIdWithExtension:", publicIdWithExtension);
+
+      const publicId = decodeURIComponent(publicIdWithExtension.substring(0, publicIdWithExtension.lastIndexOf('.')));
+      console.log('Extracted publicId:', publicId);
+
+      return publicId;
+    } catch (error) {
+      console.error(`Failed to extract public ID from URL: ${url}`, error);
+      return null;
+    }
+  };
+
+  console.log('Request ID:', req.params.id);
+  const id = req.params.id;
+
+  try {
+    const results = await Pics.findById(id);
+    if (!results) {
+      return res.status(404).json({ message: 'Image not found' });
+    }
+
+    const pics = results.pics;
+    console.log('Fetched pics:', pics);
+
+    const picsIds = [];
+    if (pics && pics.length > 0) {
+      await Promise.all(
+        pics.map(async (file) => {
+          const publicId = extractPublicId(file);
+          if (publicId) {
+            picsIds.push(publicId);
+          }
+        })
+      );
+    }
+
+    console.log('Extracted Public IDs:', picsIds);
+
+    const deleteResults = await Promise.all(
+      picsIds.map(async (publicId) => {
+        try {
+          const result = await cloudinaryInstance.uploader.destroy(publicId, {
+            invalidate: true,
+            resource_type: "image"
+          });
+          console.log("Deletion result for", publicId, ":", result);
+          return { publicId, ...result };
+        } catch (error) {
+          console.error(`Error deleting ${publicId}:`, error);
+          return { publicId, error: error.message };
+        }
+      })
+    );
+    const deleteDocument = await Pics.findByIdAndDelete(id)
+    console.log(deleteDocument);
+    
+    console.log("Final deletion results:", deleteResults);
+    res.json({ success: true, deleted: deleteResults });
+
+  } catch (error) {
+    console.error("Error fetching image data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export {
-  user, login, signup, getMsg, contactUpdate, deleteMsg,
-  contracted, work, updateContract, updateComplete, workers, workersJob
+  user, login, signup, getMsg, contactUpdate, deleteMsg, addImage,
+  contracted, work, updateContract, updateComplete, workers, workersJob, getImage, deletePic
 }                      
