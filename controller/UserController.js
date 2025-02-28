@@ -187,7 +187,7 @@ const work = async (req, res) => {
   console.log(req.params);
   const { work } = req.params
   try {
-    const data = await USER.find({ Work: work })
+    const data = await USER.find({ Work: work ,Connect:true})
     console.log(data);
     return res.status(200).json({ data: data })
   } catch (error) {
@@ -312,7 +312,7 @@ const addImage = async (req, res) => {
 
   } catch (error) {
     console.error("Upload Error:", error);
-    return res.status(500).json({ message: error });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -327,7 +327,7 @@ const getImage = async (req, res) => {
 
   }
 }
-
+ 
 // const deletePic = async (req, res) => {
 
 //   const extractPublicId = (url) => {
