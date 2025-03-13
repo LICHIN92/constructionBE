@@ -5,14 +5,17 @@ const schema = new mongoose.Schema({
         type: String,
         required: true
     },
-    place:{
-        type:String,
-        required:true
+    place: {
+        type: String,
+        required: true
     },
-    pics:{
-        type:Array,
-        required:true
+    details: {
+        type: String
+    },
+    pics: {
+        type: Array,
+        required: true
     }
 })
-const Pics=mongoose.model("PICS",schema)
-export {Pics}
+const Pics = mongoose.model("PICS", schema)
+export { Pics }

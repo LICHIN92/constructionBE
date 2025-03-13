@@ -194,7 +194,7 @@ const work = async (req, res) => {
     console.log(error);
     return res.status(500).json('internal server error')
 
-  }
+  } 
 }
 
 const updateComplete = async (req, res) => {
@@ -287,7 +287,7 @@ const addImage = async (req, res) => {
   try {
     console.log(req.body);
     console.log(req.files);
-    const { work, place } = req.body
+    const { work, place,details } = req.body
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No files uploaded" });
     }
@@ -303,10 +303,9 @@ const addImage = async (req, res) => {
     }
     console.log(uploadResults);
 
-    const data = new Pics({ work: work, place: place, pics: uploadResults })
+    const data = new Pics({ work: work, place: place,details:details, pics: uploadResults })
     await data.save()
-
-    return res.status(200).json({
+     return res.status(200).json({ 
       message: "Images uploaded successfully",
     });
 
