@@ -3,7 +3,8 @@ import {
     contactUpdate, getMsg, login, signup, user, deleteMsg,
     contracted, work, updateComplete, updateContract, workers,
     workersJob,
-    addImage,getImage,deletePic
+    addImage,getImage,deletePic,
+    deleteWorker
 } from '../controller/UserController.js'
 import { adminAuth } from '../middlewaRE/adminAuth.js'
 import { upload } from '../middlewaRE/upload.js'
@@ -25,7 +26,8 @@ UserRouter.get('/workersjob/:work',workersJob)
 UserRouter.post('/addpics',adminAuth, upload.array('pic'), addImage);
 UserRouter.get('/getpic',getImage)
 UserRouter.delete('/delete/:id',adminAuth,deletePic)
-
+UserRouter.delete('/worker/:id',deleteWorker)
+ 
 
 
 export default UserRouter

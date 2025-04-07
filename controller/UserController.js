@@ -165,7 +165,8 @@ const contracted = async (req, res) => {
         Carpentry: counts["Carpentry"],
         Wiring: counts["Electrical Wiring"],
         Total: counts["total"],
-        Paint: counts["Paint"]
+        Paint: counts["Paint"],
+        Marble: counts['Marble']
       }
       console.log(counts);
 
@@ -187,14 +188,14 @@ const work = async (req, res) => {
   console.log(req.params);
   const { work } = req.params
   try {
-    const data = await USER.find({ Work: work ,Connect:true})
+    const data = await USER.find({ Work: work, Connect: true })
     console.log(data);
     return res.status(200).json({ data: data })
   } catch (error) {
     console.log(error);
     return res.status(500).json('internal server error')
 
-  } 
+  }
 }
 
 const updateComplete = async (req, res) => {
@@ -253,12 +254,13 @@ const workers = async (req, res) => {
       Plumber: counts["Plumber"] || 0,
       Carpenter: counts["Carpenter"] || 0,
       Electrician: counts["Electrician"] || 0,
-      Tile: counts['Tiler'] || 0
+      Tile: counts['Tiler'] || 0,
+      Marble: counts['Marble'] || 0
     };
 
     console.log('Formatted counts:', jobCounts);
 
-    // Respond with the aggregated data
+    // Respond with the aggregated data 
     return res.status(200).json({
       jobCounts,
     });
@@ -287,7 +289,7 @@ const addImage = async (req, res) => {
   try {
     console.log(req.body);
     console.log(req.files);
-    const { work, place,details } = req.body
+    const { work, place, details } = req.body
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No files uploaded" });
     }
@@ -303,9 +305,9 @@ const addImage = async (req, res) => {
     }
     console.log(uploadResults);
 
-    const data = new Pics({ work: work, place: place,details:details, pics: uploadResults })
+    const data = new Pics({ work: work, place: place, details: details, pics: uploadResults })
     await data.save()
-     return res.status(200).json({ 
+    return res.status(200).json({
       message: "Images uploaded successfully",
     });
 
@@ -326,7 +328,7 @@ const getImage = async (req, res) => {
 
   }
 }
- 
+
 // const deletePic = async (req, res) => {
 
 //   const extractPublicId = (url) => {
@@ -456,7 +458,7 @@ const deletePic = async (req, res) => {
     );
     const deleteDocument = await Pics.findByIdAndDelete(id)
     console.log(deleteDocument);
-    
+
     console.log("Final deletion results:", deleteResults);
     res.json({ success: true, deleted: deleteResults });
 
@@ -466,7 +468,21 @@ const deletePic = async (req, res) => {
   }
 };
 
+const deleteWorker = async (req, res) => {
+
+  const id = req.params.id
+  console.log(req.params);
+  try {
+    const result = await WORKERS.findByIdAndDelete(id)
+    console.log(result);
+return res.status(200).json('Successfully Removed')
+  } catch (error) {
+    console.log(error);
+return res.status(500).josn('internal server error')
+  }
+ 
+}
 export {
-  user, login, signup, getMsg, contactUpdate, deleteMsg, addImage,
-  contracted, work, updateContract, updateComplete, workers, workersJob, getImage, deletePic
+  user, login, signup, getMsg, contactUpdate, deleteMsg, addImage, contracted, work,
+  updateContract, updateComplete, workers, workersJob, getImage, deletePic, deleteWorker
 }                      
