@@ -483,6 +483,6 @@ return res.status(500).josn('internal server error')
  
 }
 export {
-  user, login, signup, getMsg, contactUpdate, deleteMsg, addImage, contracted, work,
+  user, login, signup, getMsg, contactUpdate, deleteMsg, addImage, contracted, work, 
   updateContract, updateComplete, workers, workersJob, getImage, deletePic, deleteWorker
 }                      
