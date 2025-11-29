@@ -79,7 +79,7 @@ const signup = async (req, res) => {
     return res.status(500).json('internal server error')
   } 
 } 
-
+    
 const getMsg = async (req, res) => {
   try {
     const data = await USER.find()
