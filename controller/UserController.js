@@ -62,7 +62,7 @@ const signup = async (req, res) => {
   try {
     const exist = await WORKERS.find({ Mobile: Mobile })
     console.log(exist);
-
+ 
     if (exist.length > 0) {
       return res.status(409).json(`${Mobile} is already registered`)
 
@@ -74,9 +74,11 @@ const signup = async (req, res) => {
     await data.save()
     return res.status(201).json(`Your FullName is your UserName: ${FullName}`)
   } catch (error) {
+    console.log(error);
+    
     return res.status(500).json('internal server error')
-  }
-}
+  } 
+} 
 
 const getMsg = async (req, res) => {
   try {
@@ -228,7 +230,7 @@ const updateContract = async (req, res) => {
 
   }
 }
-
+ 
 const workers = async (req, res) => {
   console.log('Fetching workers data...');
 
@@ -485,4 +487,4 @@ return res.status(500).josn('internal server error')
 export {
   user, login, signup, getMsg, contactUpdate, deleteMsg, addImage, contracted, work, 
   updateContract, updateComplete, workers, workersJob, getImage, deletePic, deleteWorker
-}                      
+}                         

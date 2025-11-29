@@ -9,5 +9,5 @@ const conectDB=async()=>{
         console.log(error);
         
     } 
-}
+} 
 export default conectDB
